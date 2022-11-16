@@ -83,8 +83,8 @@ class WebCheckout
                 $orderStatus = Order::PAYED;
                 break;
             case '4666666666666669':
-                $paymentStatus = env("PROCESANDO");
                 sleep(185);
+                $paymentStatus = env("PROCESANDO");
                 $orderStatus = Order::PAYED;
                 break;
         }
