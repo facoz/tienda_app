@@ -21,7 +21,7 @@ class SessionTest extends TestCase
         $response  = $this->post('orders/create',[
             'customer_name' => 'Test Name2',
             'customer_email' => 'TestEmail@hotmail.com',
-            'customer_phone' => '3117101954',
+            'customer_phone' => '55556678',
         ]);
         $id = Order::latest('id')->first()->id;
         $response->assertRedirect("orders/view/$id");
