@@ -20,7 +20,7 @@ class OrderFactory extends Factory
         return [
             'customer_name' => $this->faker->name(),
             'customer_email' => $this->faker->safeEmail(),
-            'customer_phone' => $this->faker->sentence(5),
+            'customer_phone' => $this->faker->sentence(),
         ];
     }
 }

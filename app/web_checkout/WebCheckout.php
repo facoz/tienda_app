@@ -9,20 +9,19 @@ class WebCheckout
 
     public static function createSession()
     {
-        $curl = CreateSession::makeRequest();
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
-        curl_close($curl);
-        $response_decode = '';
-        if (!$err)
+        $responseCurl = CreateSession::makeRequest();
+        $response = $responseCurl['response'];
+        $error = $responseCurl['error'];
+        $responseDecode = '';
+        if (!$error)
         {
-            $response_decode = json_decode($response);
-            if ($response_decode->status->status == 'OK')
+            $responseDecode = json_decode($response);
+            if ($responseDecode->status->status == 'OK')
             {
-                return ['processUrl'=>$response_decode->processUrl, 'requestId'=>$response_decode->requestId];
+                return ['processUrl'=>$responseDecode->processUrl, 'requestId'=>$responseDecode->requestId];
             }
         }else{
-            return $err;
+            return $error;
         }
     }
 
@@ -41,21 +40,42 @@ class WebCheckout
         {
             return false;
         }
-        $curl = CheckSession::makeRequest($requestId);
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
-        curl_close($curl);
-        $response_decode = '';
-        if (!$err)
+        $responseCurl = CheckSession::makeRequest($requestId);
+        $response = $responseCurl['response'];
+        $error = $responseCurl['error'];
+        $responseDecode = '';
+        $internalReference = '';
+        $reference = '';
+        if (!$error)
         {
-            $response_decode = json_decode($response);
-            if ($response_decode->status->status)
+            $responseDecode = json_decode($response);
+            if ($responseDecode->status->status)
             {
-                return self::validateOrderStatus($numeroTarjeta);
+                $roderStatusValue = self::validateOrderStatus($numeroTarjeta);
+                if($responseDecode->payment)
+                {
+                    $objPaymentResponse = $responseDecode->payment[0];
+                    if(isset($objPaymentResponse))
+                    {
+                        $internalReference =  $objPaymentResponse->internalReference ?: '';
+                        $reference = $objPaymentResponse->reference ?: '';
+                    }
+                }
+                $roderStatusValue['internalReference'] = $internalReference;
+                $roderStatusValue['reference'] = $reference;
+                return $roderStatusValue;
             }
         }else{
-            return $err;
+            return $error;
         }
+    }
+
+    public static function makeTransactionOperation($internalReference, $action)
+    {
+        $responseTransaction = TransactionOperations::makeRequest($internalReference, $action);
+        $response = $responseTransaction['response'];
+        $error = $responseTransaction['error'];
+        return [$response, $error];
     }
 
     public static function validateOrderStatus($numeroTarjeta)
@@ -75,6 +95,7 @@ class WebCheckout
             case '370000000000002':
             case '36018623456787':
             case '8130010000000000':
+            case '4111111111111111':
                 $paymentStatus = env('APROBADO');
                 $orderStatus = Order::PAYED;
                 break;

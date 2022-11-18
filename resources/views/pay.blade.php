@@ -45,26 +45,15 @@
 @if ($order->payment_status == env('ESPERANDO'))
     <form action="{{route('order.execute_action',$order)}}" method="post">
         @csrf
-        @method('put')
         <h5 style="color:tomato">Estamos Procesando su orden puede esperar o proceder a cancelarla</h5>
         <div>
-            <select name="opcion">
-                <option value="cancelar">Cancelar</option>
+            <select name="action">
+                <option value="refund">Refund</option>
                 <option value="void">Void</option>
+                <option value="reverse">Reverse</option>
             </select>
+            <button type="submit">Aceptar</button>
         </div>
-        <br>
-        <button type="submit">Aceptar</button>
-    </form>
-@endif
-
-@if ($order->payment_status == env('PROCESANDO'))
-    <form action="{{route('order.execute_action',$order)}}" method="post">
-        @csrf
-        @method('put')
-     
-        {{-- aqui validamos que se actualice con 3 minutos --}}
-        <button type="submit">Aceptar</button>
     </form>
 @endif
 

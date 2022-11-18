@@ -22,6 +22,8 @@ class CreateOrdersTable extends Migration
             $table->string("status",20)->default(Order::CREATED);
             $table->string("session_id")->nullable();
             $table->string("url")->nullable();
+            $table->string("internal_reference")->nullable();
+            $table->string("reference")->nullable();
             $table->string("payment_status",80)->nullable();
             $table->timestamps();
         });

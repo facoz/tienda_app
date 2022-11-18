@@ -55,7 +55,9 @@ class OrderController extends Controller
             if($session['orderStatus'] && $session['paymentStatus'])
             {
                 $order->payment_status = $session['paymentStatus'];
-                $order->status = $session['orderStatus']; 
+                $order->payment_status = $session['paymentStatus'];
+                $order->internal_reference = $session['internalReference']; 
+                $order->reference = $session['reference']; 
                 $order->save();
             }
             else{
@@ -65,16 +67,10 @@ class OrderController extends Controller
         return  redirect()->route('order.view', $order);
     }
 
-    public function makeAction(Request $request, Order $order)
+    public function makeTransactionOperation(Request $request, Order $order)
     {
-        $objUpdateDate = new DateTime($order->updated_at);
-        $objDateTimeNow = new Datetime('now');
-        $dateDiff = $objDateTimeNow->diff($objUpdateDate);
-        return $dateDiff->format("%I");
-        if ($dateDiff >=3)
-        {
-            
-        }
-
+        $action = $request->action;
+        $a = WebCheckout::makeTransactionOperation($order->internal_reference, $action);
+        print_r([$a]);
     }
 }
