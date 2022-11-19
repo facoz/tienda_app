@@ -29,7 +29,7 @@ class Commons
                 "Content-Type: application/json"
             ],
         ]);
-        $response = curl_exec($curl);
+        $response = json_decode(curl_exec($curl));
         $error = curl_error($curl);
         curl_close($curl);
         return ['response'=>$response, 'error'=>$error];

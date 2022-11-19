@@ -11,11 +11,11 @@
         <h3>El estado de su orden es {{$order->status}}</h3>
     </div>
     <div>
-        <h5>El numero de su orden es {{$order->id}}</h5>
+        <h4>El numero de su orden es {{$order->id}}</h4>
     </div>
     <div>
         @if ($order->payment_status)
-            <h4>El estado de su pago Es: {{$order->payment_status}}</h4>
+            <h6>El estado de su pago Es: {{$order->payment_status}}</h6>
         @endif
     </div>
 </div>
@@ -28,7 +28,7 @@
     </form>
 @endif
 
-@if (in_array($order->payment_status, [env('PENDIENTE'), env("RECHAZADO")]))
+@if (in_array($order->payment_status, [env('PENDING'), env("REJECTED")]))
     <form action="{{route('order.validate',$order)}}" method="post">
         @csrf
         <select name="tipo_tarjeta">
@@ -39,10 +39,15 @@
         <input type="text" name="numero_tarjeta" placeholder="Ingrese El Numero de Tarjeta">
         <a target="_blank" href="{{$order->url}}">Ir a Pagar</a>
         <button type="submit">Validar Pago</button>
+        @error('numero_tarjeta')
+            <br>
+            <small style="color:red">*{{$message}}</small>
+            <br>
+        @enderror
     </form>
 @endif
 
-@if ($order->payment_status == env('ESPERANDO'))
+@if ($order->payment_status == env('PENDING_VALIDATION'))
     <form action="{{route('order.execute_action',$order)}}" method="post">
         @csrf
         <h5 style="color:tomato">Estamos Procesando su orden puede esperar o proceder a cancelarla</h5>
@@ -54,6 +59,13 @@
             </select>
             <button type="submit">Aceptar</button>
         </div>
+    </form>
+@endif
+
+@if (in_array($order->payment_status, [env('PENDING_PROCESS')]))
+    <form action="{{route('order.re_validate',$order)}}" method="post">
+        @csrf
+        <button type="submit">Consultar estado de pago</button>
     </form>
 @endif
 

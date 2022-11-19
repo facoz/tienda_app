@@ -27,7 +27,7 @@
             @if (!$order->payment_status)
                 <a href="{{route('order.view',$order)}}">Pagar</a>
             @endif
-            @if (in_array($order->payment_status, [env('PENDIENTE'), env('RECHAZADO'), env('REJECTED'), env('ESPERANDO'), env("PROCESANDO")]))
+            @if (in_array($order->payment_status, [env('PENDING'), env('REJECTED'), env('PENDING_VALIDATION'), env("PENDING_PROCESS")]))
                 @include('layouts.validate')
             @endif
             </td>

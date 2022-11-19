@@ -19,8 +19,9 @@ Route::controller(OrderController::class)->group(function()
     Route::get('orders/view/{order}', 'viewDetailedOrder')->name('order.view');
     Route::get('orders/all', 'viewAllOrders')->name('order.view.all');
     Route::put('orders/process/{order}', 'createCustomerSession')->name('order.process');
-    Route::post('orders/view/{order}', 'checkOrderStatus')->name('order.validate');
+    Route::post('orders/check/{order}', 'checkOrderStatus')->name('order.validate');
     Route::post('orders/actions/{order}', 'makeTransactionOperation')->name('order.execute_action');
+    Route::post('orders/check_try/{order}', 'makeTransactionOperation')->name('order.re_validate');
 });
 
 route::fallback(function() 
